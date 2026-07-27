@@ -1,0 +1,57 @@
+img{
+    width:100px;
+    height:100px;
+    border-radius: 50%;
+}
+h1{
+    color:rgb(110, 91, 220);
+}
+.intro{
+    text-align: center;
+    margin:50px;
+
+}
+.data{
+    display: block;
+    margin: 30px auto;
+    padding: 10px 15px;
+    width: 20vw
+    
+   
+    
+    
+}
+.data:hover{
+    border-color: rgb(110, 91, 220) ;
+    border-style: solid;
+    
+   
+}
+button{
+    display: block;
+    margin: 20px auto;
+    border-color:rgb(110, 91, 220) ;
+    border-radius: 5px;
+    width:120px;
+    height :40px;
+    color: white;
+    background-color: rgb(110, 91, 220);
+    cursor:pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    
+
+}
+button:hover{
+   
+     color: rgb(110, 91, 220);
+    background-color: white;
+    border-style: solid;
+    font-weight: bold;
+   
+
+
+}
+body{
+    background-color: rgb(246, 158, 205);
+}
