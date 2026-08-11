@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+
+<body>
+    <form  id="studentform">
+      <input type="text" id ="name" placeholder="Enter your name">
+      <input type="email" id ="email" placeholder="Enter your email">
+      <button type ="submit">Submit</button>
+    </form>
+    <p id="result"></p>
+
+
+ 
+ <script>
+    const form = document.getElementById("studentform");
+    const result = document.getElementById("result");
+    form.addEventListener("submit", function(){
+        event.preventDefault();
+        console.log("Form submitted!");
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        result.textContent=`Welcome ${name}! Your email is ${email}`
+        form.reset();
+    });
+
+   
+ </script>
+</html>
