@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Color Story: HSL & HWB in CSS</title>
+    <style>
+        :root {
+            --hue: 217;
+            --sat: 80%;
+            --light: 60%;
+            --white: 20%;
+            --black: 10%;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1e1b4b, #311042);
+            color: #fff;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { font-size: 2.5rem; color: #f472b6; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        header p { color: #cbd5e1; font-size: 1.1rem; }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .color-preview {
+            height: 180px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 6px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.1s ease;
+        }
+
+        .controls { display: flex; flex-direction: column; gap: 1.2rem; }
+        .control-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .control-group label { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: #e2e8f0; }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
+        .code-box {
+            background: #0f172a;
+            border-left: 4px solid #38bdf8;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #38bdf8;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .story-bubble {
+            background: #fff;
+            color: #0f172a;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            position: relative;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .story-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 30px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #fff transparent;
+            display: block;
+            width: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>The Color Story 🎨</h1>
+        <p>How screens see color vs. how humans think in CSS (`hsl` & `hwb`)</p>
+    </header>
+
+    <!-- HSL Section -->
+    <div class="card">
+        <div class="story-bubble">🧠 "I want this blue, but make it lighter or grayer!" That's HSL (Hue, Saturation, Lightness).</div>
+        <div class="grid-2">
+            <div class="controls">
+                <h2>HSL Model</h2>
+                <div class="control-group">
+                    <label><span>Hue (The Color Wheel)</span> <span id="val-h">217°</span></label>
+                    <input type="range" id="range-h" min="0" max="360" value="217">
+                </div>
+                <div class="control-group">
+                    <label><span>Saturation (Gray ↔ Vivid)</span> <span id="val-s">80%</span></label>
+                    <input type="range" id="range-s" min="0" max="100" value="80">
+                </div>
+                <div class="control-group">
+                    <label><span>Lightness (Dark ↔ Light)</span> <span id="val-l">60%</span></label>
+                    <input type="range" id="range-l" min="0" max="100" value="60">
+                </div>
+            </div>
+            <div>
+                <div id="preview-hsl" class="color-preview">Live Color</div>
+                <div class="code-box" id="code-hsl">hsl(217 80% 60%)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HWB Section -->
+    <div class="card">
+        <div class="story-bubble">🖌️ "Think of it like mixing paint: Take a base color, add White (Tint) or Black (Shade)." That's HWB!</div>
+        <div class="grid-2">
+            <div class="controls">
+                <h2>HWB Model (CSS Color 4)</h2>
+                <div class="control-group">
+                    <label><span>Hue (Base Color)</span> <span id="val-hw-h">217°</span></label>
+                    <input type="range" id="range-hw-h" min="0" max="360" value="217">
+                </div>
+                <div class="control-group">
+                    <label><span>Whiteness (Adding White Paint)</span> <span id="val-w">20%</span></label>
+                    <input type="range" id="range-w" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label><span>Blackness (Adding Black Paint)</span> <span id="val-b">10%</span></label>
+                    <input type="range" id="range-b" min="0" max="100" value="10">
+                </div>
+            </div>
+            <div>
+                <div id="preview-hwb" class="color-preview">Live Color</div>
+                <div class="code-box" id="code-hwb">hwb(217 20% 10%)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // HSL Elements
+    const hRange = document.getElementById('range-h');
+    const sRange = document.getElementById('range-s');
+    const lRange = document.getElementById('range-l');
+    const previewHsl = document.getElementById('preview-hsl');
+    const codeHsl = document.getElementById('code-hsl');
+    const valH = document.getElementById('val-h');
+    const valS = document.getElementById('val-s');
+    const valL = document.getElementById('val-l');
+
+    function updateHsl() {
+        const h = hRange.value;
+        const s = sRange.value + '%';
+        const l = lRange.value + '%';
+        
+        valH.textContent = h + '°';
+        valS.textContent = s;
+        valL.textContent = l;
+
+        const colorStr = `hsl(${h} ${s} ${l})`;
+        previewHsl.style.background = colorStr;
+        codeHsl.textContent = colorStr;
+        
+        // Adjust text color for contrast
+        previewHsl.style.color = lRange.value > 55 ? '#0f172a' : '#fff';
+    }
+
+    [hRange, sRange, lRange].forEach(input => input.addEventListener('input', updateHsl));
+    updateHsl();
+
+    // HWB Elements
+    const hwHRange = document.getElementById('range-hw-h');
+    const wRange = document.getElementById('range-w');
+    const bRange = document.getElementById('range-b');
+    const previewHwb = document.getElementById('preview-hwb');
+    const codeHwb = document.getElementById('code-hwb');
+    const valHwH = document.getElementById('val-hw-h');
+    const valW = document.getElementById('val-w');
+    const valB = document.getElementById('val-b');
+
+    function updateHwb() {
+        const h = hwHRange.value;
+        const w = wRange.value + '%';
+        const b = bRange.value + '%';
+        
+        valHwH.textContent = h + '°';
+        valW.textContent = w;
+        valB.textContent = b;
+
+        const colorStr = `hwb(${h} ${w} ${b})`;
+        previewHwb.style.background = colorStr;
+        codeHwb.textContent = colorStr;
+        
+        previewHwb.style.color = (parseInt(w) + parseInt(b) > 80) ? '#0f172a' : '#fff';
+    }
+
+    [hwHRange, wRange, bRange].forEach(input => input.addEventListener('input', updateHwb));
+    updateHwb();
+</script>
+
+</body>
+</html>
